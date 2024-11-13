@@ -1,0 +1,151 @@
+/* styles.css */
+
+/* Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    margin: 0;
+}
+
+/* Main container to center all contents */
+.container {
+    max-width: 400px;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Title */
+h1 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Input Container */
+.input-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.input-container label {
+    font-size: 1rem;
+    color: #555;
+    margin-right: 5px;
+    flex: 1 1 100px;
+    text-align: right;
+}
+
+.input-container input {
+    width: 100px;
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    transition: border-color 0.3s;
+}
+
+.input-container input:focus {
+    border-color: #333;
+}
+
+/* Time and Cost Display */
+.time-display {
+    margin-bottom: 20px;
+}
+
+.time-display h2 {
+    font-size: 1.4rem;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+.time-display span {
+    font-weight: bold;
+    color: #222;
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100px;
+}
+
+#startButton {
+    background-color: #3498db; /* Blue color */
+}
+
+#startButton:hover {
+    background-color: #2980b9;
+}
+
+#stopButton {
+    background-color: #3498db; /* Blue color */
+}
+
+#stopButton:hover {
+    background-color: #2980b9;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+    .container {
+        padding: 15px;
+    }
+
+    .input-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .input-container label,
+    .input-container input {
+        width: 100%;
+        text-align: center;
+    }
+
+    .time-display h2 {
+        font-size: 1.2rem;
+    }
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Cost Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Meeting Cost Tracker</h1>
+        
+        <div class="input-container">
+            <label for="personen">Attendees:</label>
+            <input type="number" id="personen" min="1" value="1">
+            
+            <label for="stundenlohn">Hourly Wage (€):</label>
+            <input type="number" id="stundenlohn" min="0" value="0">
+        </div>
+        
+        <div class="time-display">
+            <h2>Time: <span id="time">00:00:00</span></h2>
+            <h2>Cost: €<span id="cost">0.00</span></h2>
+        </div>
+        
+        <div class="buttons">
+            <button id="startButton">Start</button>
+            <button id="stopButton">Stop</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+
+</html>
