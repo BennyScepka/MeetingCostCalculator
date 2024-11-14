@@ -1,5 +1,8 @@
-// script.js
+document.addEventListener('DOMContentLoaded', function() {
+    populateTimeDropdown();
+});
 
+// Variables and event listeners for the original meeting tracker with a timer
 let interval;
 let startTime;
 let elapsedTime = 0; // in milliseconds
@@ -19,7 +22,7 @@ const calcHourlyWageInput = document.getElementById('calc-hourly-wage');
 const calcTimeSelect = document.getElementById('calc-time');
 const calcCostDisplay = document.getElementById('calc-cost');
 const calculateButton = document.getElementById('calculateButton');
-const resetCalcButton = document.getElementById('resetCalcButton'); // New reset button
+const resetCalcButton = document.getElementById('resetCalcButton');
 
 // Format time into hh:mm:ss
 function formatTime(ms) {
@@ -108,6 +111,3 @@ calculateButton.addEventListener('click', calculateMeetingCost);
 
 // Reset fields in the non-timer calculator when the "Reset" button is clicked
 resetCalcButton.addEventListener('click', resetCalculator);
-
-// Populate the dropdown on page load
-populateTimeDropdown();
