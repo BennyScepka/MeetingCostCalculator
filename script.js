@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Bootstrap tooltips ────────────────────────────────────────────────────────
 
 function initTooltips(root) {
+    if (typeof bootstrap === 'undefined') return;
     root.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-        new bootstrap.Tooltip(el, { trigger: 'hover focus' });
+        try { new bootstrap.Tooltip(el, { trigger: 'hover focus' }); } catch (_) {}
     });
 }
 
@@ -143,7 +144,7 @@ document.getElementById('resetButton').addEventListener('click', () => {
 
 function tickTimer() {
     elapsedMs = Date.now() - timerStart;
-    const hours = elapsedMs / 3_600_000;
+    const hours = elapsedMs / 3600000;
     document.getElementById('timer-time').textContent = formatTime(elapsedMs);
     document.getElementById('timer-cost').textContent = fmt(hours * totalHourlyCost('timer'));
 }
