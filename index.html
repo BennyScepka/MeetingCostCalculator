@@ -1,80 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meeting Cost Tracker</title>
-    <!-- Bootstrap CSS -->
+    <title>Meeting Kostenrechner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Optional custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+<body class="bg-light">
 
-    <div class="container">
-        <div class="row gx-4"> <!-- Use Bootstrap's grid system with spacing between columns -->
+    <div class="container py-5">
 
-            <!-- Original Meeting Cost Tracker with Timer -->
-            <div class="col-12 col-md-6 d-flex align-items-stretch">
-                <div class="bg-white p-4 rounded shadow-lg text-center w-100 equal-height">
-                    <h1 class="mb-4">Meeting Cost Tracker</h1>
-                    
-                    <div class="input-container row mb-4">
-                        <div class="col-12 col-md-6 mb-3 mb-md-0">
-                            <label for="personen" class="form-label">Attendees:</label>
-                            <input type="number" id="personen" class="form-control" min="1" value="1">
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label for="stundenlohn" class="form-label">Hourly Wage (€):</label>
-                            <input type="number" id="stundenlohn" class="form-control" min="0" value="0">
-                        </div>
+        <div class="text-center mb-5">
+            <h1 class="app-title">Meeting Kostenrechner</h1>
+            <p class="text-muted small">Berechnen Sie die wahren Kosten Ihrer Meetings</p>
+        </div>
+
+        <div class="row gx-4 gy-4">
+
+            <!-- Live Timer -->
+            <div class="col-12 col-lg-6 d-flex align-items-stretch">
+                <div class="card w-100">
+                    <div class="card-header">
+                        <i class="bi bi-stopwatch me-1"></i> Live Timer
                     </div>
-                    
-                    <div class="time-display mb-4">
-                        <h2>Time: <span id="time">00:00:00</span></h2>
-                        <h2>Cost: €<span id="cost">0.00</span></h2>
-                    </div>
-                    
-                    <div class="buttons d-flex justify-content-center gap-3">
-                        <button id="startButton" class="btn btn-primary">Start</button>
-                        <button id="stopButton" class="btn btn-danger">Stop</button>
-                        <button id="resetButton" class="btn btn-secondary">Reset</button>
+                    <div class="card-body p-4">
+
+                        <div class="setting-row mb-3">
+                            <label class="section-label mb-0">
+                                Stunden pro Arbeitstag
+                                <span class="tip" tabindex="0"
+                                      data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="Basis für die Umrechnung von Tagessätzen: Tagessatz ÷ Stunden/Tag = Stundensatz">?</span>
+                            </label>
+                            <input type="number" id="timer-hours-per-day" class="form-control form-control-sm hours-input"
+                                   min="1" max="24" value="8">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="section-label">
+                                Teilnehmer
+                                <span class="tip" tabindex="0"
+                                      data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="Verschiedene Rollen mit individuellen Stunden- oder Tagessätzen. Kosten werden anteilig nach Meetingdauer berechnet.">?</span>
+                            </label>
+                            <div id="timer-participants" class="participants-list"></div>
+                            <button class="btn btn-add mt-2" id="timer-add-participant">
+                                <i class="bi bi-plus-circle me-1"></i>Teilnehmer hinzufügen
+                            </button>
+                        </div>
+
+                        <div class="cost-display my-4">
+                            <div class="timer-clock" id="timer-time">00:00:00</div>
+                            <div class="cost-row mt-1">
+                                <span class="cost-label">Kosten</span>
+                                <span class="cost-value" id="timer-cost">€0,00</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-2">
+                            <button id="startButton" class="btn btn-primary">
+                                <i class="bi bi-play-fill me-1"></i>Start
+                            </button>
+                            <button id="stopButton" class="btn btn-danger">
+                                <i class="bi bi-stop-fill me-1"></i>Stop
+                            </button>
+                            <button id="resetButton" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
-            <!-- New Meeting Cost Calculator (Without Timer) -->
-            <div class="col-12 col-md-6 d-flex align-items-stretch">
-                <div class="bg-white p-4 rounded shadow-lg text-center w-100 equal-height">
-                    <h2 class="mb-4">Meeting Cost Calculator</h2>
-
-                    <div class="input-container row mb-4">
-                        <div class="col-12 col-md-6 mb-3 mb-md-0">
-                            <label for="calc-attendees" class="form-label">Attendees:</label>
-                            <input type="number" id="calc-attendees" class="form-control" min="1" value="1">
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label for="calc-hourly-wage" class="form-label">Hourly Wage (€):</label>
-                            <input type="number" id="calc-hourly-wage" class="form-control" min="0" value="0">
-                        </div>
+            <!-- Schnellrechner -->
+            <div class="col-12 col-lg-6 d-flex align-items-stretch">
+                <div class="card w-100">
+                    <div class="card-header">
+                        <i class="bi bi-calculator me-1"></i> Schnellrechner
                     </div>
+                    <div class="card-body p-4">
 
-                    <div class="input-container row mb-4">
-                        <div class="col-12">
-                            <label for="calc-time" class="form-label">Time:</label>
-                            <select id="calc-time" class="form-select">
-                                <!-- JavaScript will populate this dropdown -->
-                            </select>
+                        <div class="setting-row mb-3">
+                            <label class="section-label mb-0">
+                                Stunden pro Arbeitstag
+                                <span class="tip" tabindex="0"
+                                      data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="Basis für die Umrechnung von Tagessätzen: Tagessatz ÷ Stunden/Tag = Stundensatz">?</span>
+                            </label>
+                            <input type="number" id="calc-hours-per-day" class="form-control form-control-sm hours-input"
+                                   min="1" max="24" value="8">
                         </div>
-                    </div>
 
-                    <div class="mb-4">
-                        <h2>Cost: €<span id="calc-cost">0.00</span></h2>
-                    </div>
+                        <div class="mb-3">
+                            <label class="section-label">
+                                Teilnehmer
+                                <span class="tip" tabindex="0"
+                                      data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="Verschiedene Rollen mit individuellen Stunden- oder Tagessätzen. Kosten werden anteilig nach Meetingdauer berechnet.">?</span>
+                            </label>
+                            <div id="calc-participants" class="participants-list"></div>
+                            <button class="btn btn-add mt-2" id="calc-add-participant">
+                                <i class="bi bi-plus-circle me-1"></i>Teilnehmer hinzufügen
+                            </button>
+                        </div>
 
-                    <div class="buttons d-flex justify-content-center gap-3">
-                        <button id="calculateButton" class="btn btn-success">Calculate Cost</button>
-                        <button id="resetCalcButton" class="btn btn-secondary">Reset</button>
+                        <div class="mb-3">
+                            <label for="calc-duration" class="section-label">
+                                Meetingdauer
+                                <span class="tip" tabindex="0"
+                                      data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="Geplante Dauer des Meetings in 15-Minuten-Schritten (bis zu 8 Stunden)">?</span>
+                            </label>
+                            <select id="calc-duration" class="form-select"></select>
+                        </div>
+
+                        <div class="cost-display my-4">
+                            <div class="cost-row">
+                                <span class="cost-label">Gesamtkosten</span>
+                                <span class="cost-value" id="calc-cost">€0,00</span>
+                            </div>
+                            <div id="calc-breakdown" class="breakdown"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-2">
+                            <button id="calculateButton" class="btn btn-success">
+                                <i class="bi bi-calculator me-1"></i>Berechnen
+                            </button>
+                            <button id="resetCalcButton" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -82,8 +141,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
-    <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

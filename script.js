@@ -1,113 +1,190 @@
-document.addEventListener('DOMContentLoaded', function() {
-    populateTimeDropdown();
+document.addEventListener('DOMContentLoaded', () => {
+    initTooltips(document);
+    populateDurationDropdown();
+
+    addParticipant('timer', 'Consultant', 1, 'h', 85);
+    addParticipant('timer', 'Kunde', 2, 'tag', 600);
+    addParticipant('calc', 'Consultant', 1, 'h', 85);
+    addParticipant('calc', 'Kunde', 2, 'tag', 600);
 });
 
-// Variables and event listeners for the original meeting tracker with a timer
-let interval;
-let startTime;
-let elapsedTime = 0; // in milliseconds
-let isRunning = false;
+// ── Bootstrap tooltips ────────────────────────────────────────────────────────
 
-const timeDisplay = document.getElementById('time');
-const costDisplay = document.getElementById('cost');
-const personenInput = document.getElementById('personen');
-const stundenlohnInput = document.getElementById('stundenlohn');
-const startButton = document.getElementById('startButton');
-const stopButton = document.getElementById('stopButton');
-const resetButton = document.getElementById('resetButton');
+function initTooltips(root) {
+    root.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+        new bootstrap.Tooltip(el, { trigger: 'hover focus' });
+    });
+}
 
-// Elements for the non-timer calculator
-const calcAttendeesInput = document.getElementById('calc-attendees');
-const calcHourlyWageInput = document.getElementById('calc-hourly-wage');
-const calcTimeSelect = document.getElementById('calc-time');
-const calcCostDisplay = document.getElementById('calc-cost');
-const calculateButton = document.getElementById('calculateButton');
-const resetCalcButton = document.getElementById('resetCalcButton');
+// ── Duration dropdown ─────────────────────────────────────────────────────────
 
-// Format time into hh:mm:ss
+function populateDurationDropdown() {
+    const select = document.getElementById('calc-duration');
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = '— Dauer wählen —';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    select.appendChild(placeholder);
+
+    for (let i = 1; i <= 32; i++) {
+        const minutes = i * 15;
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        const opt = document.createElement('option');
+        opt.value = minutes / 60;
+        opt.textContent = h > 0
+            ? (m === 0 ? `${h}:00 h` : `${h}:${String(m).padStart(2, '0')} h`)
+            : `${m} min`;
+        select.appendChild(opt);
+    }
+}
+
+// ── Participants ──────────────────────────────────────────────────────────────
+
+function addParticipant(panel, name = '', count = 1, rateType = 'h', rate = 0) {
+    const container = document.getElementById(`${panel}-participants`);
+
+    const row = document.createElement('div');
+    row.className = 'participant-row';
+
+    const isHourly = rateType === 'h';
+
+    row.innerHTML = `
+        <input type="text" class="form-control form-control-sm p-name"
+               placeholder="Rolle (z.B. Consultant)" value="${name}">
+        <input type="number" class="form-control form-control-sm p-count text-center"
+               min="1" value="${count}"
+               data-bs-toggle="tooltip" title="Anzahl Personen dieser Rolle">
+        <div class="btn-group btn-group-sm rate-toggle" role="group">
+            <button type="button"
+                    class="btn ${isHourly ? 'btn-primary' : 'btn-outline-primary'} rate-btn"
+                    data-type="h"
+                    data-bs-toggle="tooltip" title="Stundensatz – direkt pro Stunde abgerechnet">€/h</button>
+            <button type="button"
+                    class="btn ${!isHourly ? 'btn-primary' : 'btn-outline-primary'} rate-btn"
+                    data-type="tag"
+                    data-bs-toggle="tooltip" title="Tagessatz – wird durch Stunden/Tag geteilt um den Stundensatz zu erhalten">€/Tag</button>
+        </div>
+        <input type="number" class="form-control form-control-sm p-rate text-end"
+               min="0" step="any" value="${rate}"
+               data-bs-toggle="tooltip" title="Kosten in Euro (Stunden- oder Tagessatz)">
+        <button class="btn btn-sm btn-outline-danger btn-remove"
+                data-bs-toggle="tooltip" title="Teilnehmer entfernen">×</button>
+    `;
+
+    row.querySelectorAll('.rate-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            row.querySelectorAll('.rate-btn').forEach(b => {
+                b.classList.replace('btn-primary', 'btn-outline-primary');
+            });
+            btn.classList.replace('btn-outline-primary', 'btn-primary');
+        });
+    });
+
+    row.querySelector('.btn-remove').addEventListener('click', () => row.remove());
+
+    initTooltips(row);
+    container.appendChild(row);
+}
+
+function getParticipants(panel) {
+    const hoursPerDay = Math.max(1, parseFloat(document.getElementById(`${panel}-hours-per-day`).value) || 8);
+
+    return Array.from(document.querySelectorAll(`#${panel}-participants .participant-row`)).map(row => {
+        const name      = row.querySelector('.p-name').value.trim() || 'Teilnehmer';
+        const count     = parseInt(row.querySelector('.p-count').value) || 0;
+        const rateType  = row.querySelector('.rate-btn.btn-primary')?.dataset.type || 'h';
+        const rate      = parseFloat(row.querySelector('.p-rate').value) || 0;
+        const hourlyRate = rateType === 'tag' ? rate / hoursPerDay : rate;
+        return { name, count, rateType, rate, hourlyRate };
+    });
+}
+
+function totalHourlyCost(panel) {
+    return getParticipants(panel).reduce((sum, p) => sum + p.count * p.hourlyRate, 0);
+}
+
+function fmt(val) {
+    return '€ ' + val.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ── Timer ─────────────────────────────────────────────────────────────────────
+
+let timerInterval;
+let timerStart;
+let elapsedMs  = 0;
+let timerRunning = false;
+
+document.getElementById('timer-add-participant').addEventListener('click', () =>
+    addParticipant('timer'));
+
+document.getElementById('startButton').addEventListener('click', () => {
+    if (timerRunning) return;
+    timerRunning = true;
+    timerStart   = Date.now() - elapsedMs;
+    timerInterval = setInterval(tickTimer, 100);
+});
+
+document.getElementById('stopButton').addEventListener('click', () => {
+    if (!timerRunning) return;
+    timerRunning = false;
+    clearInterval(timerInterval);
+});
+
+document.getElementById('resetButton').addEventListener('click', () => {
+    timerRunning = false;
+    clearInterval(timerInterval);
+    elapsedMs = 0;
+    document.getElementById('timer-time').textContent = '00:00:00';
+    document.getElementById('timer-cost').textContent = fmt(0);
+});
+
+function tickTimer() {
+    elapsedMs = Date.now() - timerStart;
+    const hours = elapsedMs / 3_600_000;
+    document.getElementById('timer-time').textContent = formatTime(elapsedMs);
+    document.getElementById('timer-cost').textContent = fmt(hours * totalHourlyCost('timer'));
+}
+
 function formatTime(ms) {
-    let totalSeconds = Math.floor(ms / 1000);
-    let hours = Math.floor(totalSeconds / 3600);
-    let minutes = Math.floor((totalSeconds % 3600) / 60);
-    let seconds = totalSeconds % 60;
-
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const s = Math.floor(ms / 1000);
+    return [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60]
+        .map(v => String(v).padStart(2, '0')).join(':');
 }
 
-// Calculate cost based on elapsed time, number of people, and hourly wage
-function calculateCost(ms) {
-    let hours = ms / 3600000;
-    let personen = parseInt(personenInput.value) || 1;
-    let stundenlohn = parseFloat(stundenlohnInput.value) || 0;
-    
-    return (hours * personen * stundenlohn).toFixed(2);
-}
+// ── Calculator ────────────────────────────────────────────────────────────────
 
-// Populate time dropdown with values from 0 to 8 hours in 15-minute increments
-function populateTimeDropdown() {
-    for (let i = 0; i <= 8 * 4; i++) { // 4 increments per hour up to 8 hours
-        let minutes = i * 15;
-        let hours = Math.floor(minutes / 60);
-        let remainingMinutes = minutes % 60;
-        let timeString = `${hours}:${String(remainingMinutes).padStart(2, '0')}`;
-        let option = document.createElement('option');
-        option.value = minutes / 60; // value in hours
-        option.textContent = timeString + " hours";
-        calcTimeSelect.appendChild(option);
-    }
-}
+document.getElementById('calc-add-participant').addEventListener('click', () =>
+    addParticipant('calc'));
 
-// Calculate cost based on selected time, attendees, and hourly wage
-function calculateMeetingCost() {
-    let attendees = parseInt(calcAttendeesInput.value) || 1;
-    let hourlyWage = parseFloat(calcHourlyWageInput.value) || 0;
-    let timeInHours = parseFloat(calcTimeSelect.value) || 0;
+document.getElementById('calculateButton').addEventListener('click', () => {
+    const hours = parseFloat(document.getElementById('calc-duration').value) || 0;
+    const participants = getParticipants('calc');
+    const total = hours * participants.reduce((sum, p) => sum + p.count * p.hourlyRate, 0);
 
-    let totalCost = attendees * hourlyWage * timeInHours;
-    calcCostDisplay.textContent = totalCost.toFixed(2);
-}
+    document.getElementById('calc-cost').textContent = fmt(total);
 
-// Reset the non-timer calculator fields
-function resetCalculator() {
-    calcAttendeesInput.value = 1;
-    calcHourlyWageInput.value = 0;
-    calcTimeSelect.value = 0;
-    calcCostDisplay.textContent = "0.00";
-}
-
-// Start the timer
-startButton.addEventListener('click', () => {
-    if (!isRunning) {
-        isRunning = true;
-        startTime = Date.now() - elapsedTime;
-        
-        interval = setInterval(() => {
-            elapsedTime = Date.now() - startTime;
-            timeDisplay.textContent = formatTime(elapsedTime);
-            costDisplay.textContent = calculateCost(elapsedTime);
-        }, 100);
+    const breakdown = document.getElementById('calc-breakdown');
+    if (hours > 0 && participants.length > 0) {
+        breakdown.innerHTML = participants.map(p => {
+            const cost = hours * p.count * p.hourlyRate;
+            const rateLabel = p.rateType === 'tag'
+                ? `${fmt(p.rate)}/Tag`
+                : `${fmt(p.rate)}/h`;
+            return `<div class="breakdown-row">
+                <span>${p.name} &times; ${p.count} &nbsp;<span class="text-muted">(${rateLabel})</span></span>
+                <strong>${fmt(cost)}</strong>
+            </div>`;
+        }).join('');
+    } else {
+        breakdown.innerHTML = '';
     }
 });
 
-// Stop the timer
-stopButton.addEventListener('click', () => {
-    if (isRunning) {
-        isRunning = false;
-        clearInterval(interval);
-    }
+document.getElementById('resetCalcButton').addEventListener('click', () => {
+    document.getElementById('calc-duration').selectedIndex = 0;
+    document.getElementById('calc-cost').textContent = fmt(0);
+    document.getElementById('calc-breakdown').innerHTML = '';
 });
-
-// Reset the timer and cost
-resetButton.addEventListener('click', () => {
-    isRunning = false;
-    clearInterval(interval);
-    elapsedTime = 0;
-    timeDisplay.textContent = "00:00:00";
-    costDisplay.textContent = "0.00";
-});
-
-// Calculate cost without timer when the "Calculate Cost" button is clicked
-calculateButton.addEventListener('click', calculateMeetingCost);
-
-// Reset fields in the non-timer calculator when the "Reset" button is clicked
-resetCalcButton.addEventListener('click', resetCalculator);

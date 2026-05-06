@@ -1,0 +1,136 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - heading "Meeting Kostenrechner" [level=1] [ref=e4]
+    - paragraph [ref=e5]: Berechnen Sie die wahren Kosten Ihrer Meetings
+  - generic [ref=e6]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: 
+        - text: Live Timer
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - text: Stunden pro Arbeitstag
+            - generic [ref=e14]: "?"
+          - spinbutton [ref=e15]: "8"
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - text: Teilnehmer
+            - generic [ref=e18]: "?"
+          - generic [ref=e19]:
+            - generic [ref=e20]:
+              - textbox "Rolle (z.B. Consultant)" [ref=e21]: Consultant
+              - spinbutton "Anzahl Personen dieser Rolle" [ref=e22]: "1"
+              - group [ref=e23]:
+                - button "€/h" [ref=e24] [cursor=pointer]
+                - button "€/Tag" [ref=e25] [cursor=pointer]
+              - spinbutton "Kosten in Euro (Stunden- oder Tagessatz)" [ref=e26]: "85"
+              - button "×" [ref=e27] [cursor=pointer]
+            - generic [ref=e28]:
+              - textbox "Rolle (z.B. Consultant)" [ref=e29]: Kunde
+              - spinbutton "Anzahl Personen dieser Rolle" [ref=e30]: "2"
+              - group [ref=e31]:
+                - button "€/h" [ref=e32] [cursor=pointer]
+                - button "€/Tag" [ref=e33] [cursor=pointer]
+              - spinbutton "Kosten in Euro (Stunden- oder Tagessatz)" [ref=e34]: "600"
+              - button "×" [ref=e35] [cursor=pointer]
+          - button " Teilnehmer hinzufügen" [ref=e36] [cursor=pointer]:
+            - generic [ref=e37]: 
+            - text: Teilnehmer hinzufügen
+        - generic [ref=e38]:
+          - generic [ref=e39]: 00:00:00
+          - generic [ref=e40]:
+            - generic [ref=e41]: Kosten
+            - generic [ref=e42]: €0,00
+        - generic [ref=e43]:
+          - button " Start" [ref=e44] [cursor=pointer]:
+            - generic [ref=e45]: 
+            - text: Start
+          - button " Stop" [ref=e46] [cursor=pointer]:
+            - generic [ref=e47]: 
+            - text: Stop
+          - button " Reset" [ref=e48] [cursor=pointer]:
+            - generic [ref=e49]: 
+            - text: Reset
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e53]: 
+        - text: Schnellrechner
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - text: Stunden pro Arbeitstag
+            - generic [ref=e57]: "?"
+          - spinbutton [ref=e58]: "8"
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - text: Teilnehmer
+            - generic [ref=e61]: "?"
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - textbox "Rolle (z.B. Consultant)" [ref=e64]: Consultant
+              - spinbutton "Anzahl Personen dieser Rolle" [ref=e65]: "1"
+              - group [ref=e66]:
+                - button "€/h" [ref=e67] [cursor=pointer]
+                - button "€/Tag" [ref=e68] [cursor=pointer]
+              - spinbutton "Kosten in Euro (Stunden- oder Tagessatz)" [ref=e69]: "85"
+              - button "×" [ref=e70] [cursor=pointer]
+            - generic [ref=e71]:
+              - textbox "Rolle (z.B. Consultant)" [ref=e72]: Kunde
+              - spinbutton "Anzahl Personen dieser Rolle" [ref=e73]: "2"
+              - group [ref=e74]:
+                - button "€/h" [ref=e75] [cursor=pointer]
+                - button "€/Tag" [ref=e76] [cursor=pointer]
+              - spinbutton "Kosten in Euro (Stunden- oder Tagessatz)" [ref=e77]: "600"
+              - button "×" [ref=e78] [cursor=pointer]
+          - button " Teilnehmer hinzufügen" [ref=e79] [cursor=pointer]:
+            - generic [ref=e80]: 
+            - text: Teilnehmer hinzufügen
+        - generic [ref=e81]:
+          - generic [ref=e82]:
+            - text: Meetingdauer
+            - generic [ref=e83]: "?"
+          - combobox "Meetingdauer ?" [ref=e84]:
+            - option "— Dauer wählen —" [disabled] [selected]
+            - option "15 min"
+            - option "30 min"
+            - option "45 min"
+            - option "1:00 h"
+            - option "1:15 h"
+            - option "1:30 h"
+            - option "1:45 h"
+            - option "2:00 h"
+            - option "2:15 h"
+            - option "2:30 h"
+            - option "2:45 h"
+            - option "3:00 h"
+            - option "3:15 h"
+            - option "3:30 h"
+            - option "3:45 h"
+            - option "4:00 h"
+            - option "4:15 h"
+            - option "4:30 h"
+            - option "4:45 h"
+            - option "5:00 h"
+            - option "5:15 h"
+            - option "5:30 h"
+            - option "5:45 h"
+            - option "6:00 h"
+            - option "6:15 h"
+            - option "6:30 h"
+            - option "6:45 h"
+            - option "7:00 h"
+            - option "7:15 h"
+            - option "7:30 h"
+            - option "7:45 h"
+            - option "8:00 h"
+        - generic [ref=e86]:
+          - generic [ref=e87]: Gesamtkosten
+          - generic [ref=e88]: €0,00
+        - generic [ref=e89]:
+          - button " Berechnen" [ref=e90] [cursor=pointer]:
+            - generic [ref=e91]: 
+            - text: Berechnen
+          - button " Reset" [ref=e92] [cursor=pointer]:
+            - generic [ref=e93]: 
+            - text: Reset
